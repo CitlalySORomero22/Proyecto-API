@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+    <header>
+        <title>DOM javascript</title>
+    </header>
+    <body>
+        <h1>DOM javascript</h1>
+        <script type="text/javascript" src="get_clientes.html"></script>
+        <table id="tabla_clientes">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+        </table>
+
+        <script async>
+            document.body.onload = getClientes(0);
+        </script>
+    </body>
+</html>
