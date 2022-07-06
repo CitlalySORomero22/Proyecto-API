@@ -1,11 +1,16 @@
-import hashlib  # importa la libreria hashlib 
-import sqlite3 
-import os 
-from typing import List 
-from fastapi import Depends, FastAPI, HTTPException, status 
-from fastapi.security import HTTPBasic, HTTPBasicCredentials 
-from pydantic import BaseModel 
-from typing import Union  
+from lib2to3.pytree import Base
+from typing import Union
+from typing_extensions import Self
+from urllib import response
+from urllib.request import Request
+from fastapi import Depends, FastAPI, HTTPException, status
+from typing import List
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from pydantic import BaseModel
+import sqlite3
+import os
+import hashlib
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI() 
 
@@ -13,9 +18,6 @@ DATABASE_URL = os.path.join("sql/clientes.sqlite")
 
 security = HTTPBasic() 
 
-class Usuarios(BaseModel): 
-    username: str 
-    level: int 
 
 class Respuesta (BaseModel) :  
     message: str  
@@ -24,6 +26,23 @@ class Cliente (BaseModel):
     id_cliente: int  
     nombre: str  
     email: str  
+
+
+origin = [
+    "https://8080-citlalysoro-proyectoapi-mof65rxhuri.ws-us51.gitpod.io/",
+    "https://8000-citlalysoro-proyectoapi-mof65rxhuri.ws-us51.gitpod.io/"
+   
+    
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins="*",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 @app.get("/", response_model=Respuesta) 
@@ -50,7 +69,7 @@ def get_current_level(credentials: HTTPBasicCredentials = Depends(security)):
 
 @app.get("/clientes/", response_model=List[Cliente],status_code=status.HTTP_202_ACCEPTED,
 summary="Regresa una lista de usuarios",description="Regresa una lista de usuarios")
-async def clientes(level: int = Depends(get_current_level)):
+async def get_clientes(level: int = Depends(get_current_level)):
     if level == 1: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
@@ -66,8 +85,8 @@ async def clientes(level: int = Depends(get_current_level)):
         )
 
 @app.get("/clientes/{id}", response_model=List[Cliente],status_code=status.HTTP_202_ACCEPTED,
-summary="Regresa una lista de usuarios",description="Regresa una lista de usuarios")
-async def clientes(level: int = Depends(get_current_level),id_cliente: int=0):
+summary="Regresa una lista de un usuario",description="Regresa una lista de usuarios")
+async def get_clientesid(level: int = Depends(get_current_level),id_cliente: int=0):
     if level == 1: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
@@ -85,7 +104,7 @@ async def clientes(level: int = Depends(get_current_level),id_cliente: int=0):
 
 @app.post("/clientes/", response_model=Respuesta,status_code=status.HTTP_202_ACCEPTED,
 summary="Inserta un usuario",description="Inserta un usuario")
-async def clientes(level: int = Depends(get_current_level),nombre: str="", email:str=""):
+async def post_clientes(level: int = Depends(get_current_level),nombre: str="", email:str=""):
     if level == 0: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
@@ -103,7 +122,7 @@ async def clientes(level: int = Depends(get_current_level),nombre: str="", email
 
 @app.put("/clientes/", response_model=Respuesta,status_code=status.HTTP_202_ACCEPTED,
 summary="Actualiza un usuario",description="Actualiza un usuario")
-async def clientes(level: int = Depends(get_current_level), id_cliente: int=0, nombre: str="", email:str=""):
+async def put_clientes(level: int = Depends(get_current_level), id_cliente: int=0, nombre: str="", email:str=""):
     if level == 0: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
@@ -122,7 +141,7 @@ async def clientes(level: int = Depends(get_current_level), id_cliente: int=0, n
 
 @app.delete("/clientes/", response_model=Respuesta,status_code=status.HTTP_202_ACCEPTED,
 summary="Elimina un usuario",description="Elimina un usuario")
-async def clientes(level: int = Depends(get_current_level), id_cliente: int=0):
+async def delete_clientes(level: int = Depends(get_current_level), id_cliente: int=0):
     if level == 0: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
