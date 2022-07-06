@@ -7,23 +7,8 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel 
 from typing import Union  
 
-from fastapi.middleware.cors import CORSMiddleware
+app = FastAPI() 
 
-app = FastAPI()
-
-origins = [
-    "http://localhost:8080",
-    "http://127.0.0.1:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
- 
 DATABASE_URL = os.path.join("sql/clientes.sqlite") 
 
 security = HTTPBasic() 
