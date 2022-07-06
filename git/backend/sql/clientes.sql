@@ -11,7 +11,7 @@ INSERT INTO clientes(nombre, email) VALUES ('Alison', 'alis@email.com');
   
 .headers ON  
   
-SELECT *FROM clientes; 
+SELECT * FROM clientes; 
  
 DROP TABLE IF EXISTS usuarios; 
  
