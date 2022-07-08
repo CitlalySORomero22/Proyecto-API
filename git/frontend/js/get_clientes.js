@@ -22,9 +22,6 @@ function getClientes() {
             <th>Email</th>
         </tr>`;
 
-    request.send();
-
-   
     request.onload = () => {
         // Almacena la respuesta en una variable, si es 202 es que se obtuvo correctamente
         const response = request.responseText;
@@ -36,15 +33,18 @@ function getClientes() {
             const response = request.responseText;
             const json = JSON.parse(response);
             for (let i = 0; i < json.length; i++) {
-                var tr = document.createElement('tr');
-                var id_cliente = document.createElement('td');
-                var nombre = document.createElement('td');
-                var email = document.createElement('td');
+                var tr          = document.createElement('tr');
+                var detalle     = document.createElement('td');
+                var id_cliente  = document.createElement('td');
+                var nombre      = document.createElement('td');
+                var email       = document.createElement('td');
 
-                id_cliente.innerHTML = json[i].id_cliente;
-                nombre.innerHTML = json[i].nombre;
-                email.innerHTML = json[i].email;
+                detalle.innerHTML       = "<a href='/pages/get_cliente.html?"+json[i].id_cliente+"'>Detalle</a";
+                id_cliente.innerHTML    = json[i].id_cliente;
+                nombre.innerHTML        = json[i].nombre;
+                email.innerHTML         = json[i].email;
 
+                tr.appendChild(detalle);
                 tr.appendChild(id_cliente);
                 tr.appendChild(nombre);
                 tr.appendChild(email);
@@ -55,5 +55,5 @@ function getClientes() {
             tabla.appendChild(tblBody);
         }
     };
-    
+    request.send();
 }
