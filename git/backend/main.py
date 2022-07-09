@@ -27,10 +27,13 @@ class Cliente (BaseModel):
     nombre: str  
     email: str  
 
+class ClienteIN(BaseModel):
+    nombre: str
+    email : str
 
 origin = [
   "https://8000-citlalysoro-proyectoapi-mof65rxhuri.ws-us53.gitpod.io/",
-  "https://8080-citlalysoro-proyectoapi-mof65rxhuri.ws-us51.gitpod.io/"
+  "https://8080-citlalysoro-proyectoapi-mof65rxhuri.ws-us53.gitpod.io/"
     
     
 ]
@@ -86,7 +89,7 @@ async def get_clientes(level: int = Depends(get_current_level)):
 
 @app.get("/clientes/{id}", response_model=List[Cliente],status_code=status.HTTP_202_ACCEPTED,
 summary="Regresa una lista de un usuario",description="Regresa una lista de usuarios")
-async def get_clientesid(level: int = Depends(get_current_level),id_cliente: int=0):
+async def get_cliente_id(id_cliente: int=0, level: int = Depends(get_current_level)):
     if level == 1: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
@@ -110,12 +113,12 @@ async def get_clientesid(level: int = Depends(get_current_level),id_cliente: int
 
 @app.post("/clientes/", response_model=Respuesta,status_code=status.HTTP_202_ACCEPTED,
 summary="Inserta un usuario",description="Inserta un usuario")
-async def post_clientes(level: int = Depends(get_current_level),nombre: str="", email:str=""):
-    if level == 0: 
+async def post_clientes(cliente: ClienteIN, level: int = Depends(get_current_level)):
+    if level == 1: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO clientes (nombre, email) VALUES (? , ?);",(nombre, email))
+            cursor.execute("INSERT INTO clientes (nombre, email) VALUES (? , ?);",(cliente.nombre, cliente.email))
             connection.commit()
             response = {"message":"Cliente agregado"}
             return response
@@ -128,12 +131,12 @@ async def post_clientes(level: int = Depends(get_current_level),nombre: str="", 
 
 @app.put("/clientes/", response_model=Respuesta,status_code=status.HTTP_202_ACCEPTED,
 summary="Actualiza un usuario",description="Actualiza un usuario")
-async def put_clientes(level: int = Depends(get_current_level), id_cliente: int=0, nombre: str="", email:str=""):
-    if level == 0: 
+async def put_clientes(cliente: Cliente, level: int = Depends(get_current_level)):
+    if level == 1: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
             cursor = connection.cursor()
-            cursor.execute("UPDATE clientes SET nombre =?, email= ? WHERE id_cliente =?;",(nombre, email, id_cliente))
+            cursor.execute("UPDATE clientes SET nombre =?, email= ? WHERE id_cliente =?;",(cliente.nombre, cliente.email, cliente.id_cliente))
             connection.commit()
             response = {"message":"Cliente actualizado"}
             return response
@@ -148,7 +151,7 @@ async def put_clientes(level: int = Depends(get_current_level), id_cliente: int=
 @app.delete("/clientes/", response_model=Respuesta,status_code=status.HTTP_202_ACCEPTED,
 summary="Elimina un usuario",description="Elimina un usuario")
 async def delete_clientes(level: int = Depends(get_current_level), id_cliente: int=0):
-    if level == 0: 
+    if level == 1: 
         with sqlite3.connect(DATABASE_URL) as connection:
             connection.row_factory = sqlite3.Row
             cursor = connection.cursor()
@@ -162,4 +165,3 @@ async def delete_clientes(level: int = Depends(get_current_level), id_cliente: i
             detail="Don't have permission to access this resource",
             headers={"WWW-Authenticate": "Basic"},
         )
-
